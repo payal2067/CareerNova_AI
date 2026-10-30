@@ -1,111 +1,253 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+@plugin "flyonui" {
+  themes: all;
+}
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import "flyonui/variants.css";
+@source "../node_modules/flyonui/flyonui.js";
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+@theme {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+
+  /* Custom Color Tokens - Deep Obsidian & Electric Violet */
+  --color-obsidian-950: #030014;
+  --color-obsidian-900: #05021a;
+  --color-obsidian-800: #0b0726;
+  --color-electric-violet: #a855f7;
+  --color-neon-indigo: #6366f1;
+  --color-cyber-cyan: #06b6d4;
+
+  /* Extended animations & keyframes */
+  --animate-gradient-shift: gradient-shift 8s ease infinite;
+  --animate-pulse-glow: pulse-glow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.5s infinite linear;
+  --animate-neon-pulse: neon-pulse 3s ease-in-out infinite;
+  --animate-border-glow: border-glow 4s linear infinite;
+
+  @keyframes gradient-shift {
+
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.02);
+      filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.75));
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes neon-pulse {
+
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.35), inset 0 0 15px rgba(168, 85, 247, 0.15);
+    }
+
+    50% {
+      box-shadow: 0 0 35px rgba(168, 85, 247, 0.7), inset 0 0 25px rgba(168, 85, 247, 0.35);
+    }
+  }
+
+  @keyframes border-glow {
+    0% {
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+
+    50% {
+      border-color: rgba(99, 102, 241, 0.8);
+    }
+
+    100% {
+      border-color: rgba(168, 85, 247, 0.4);
+    }
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* Custom Base Layer & Custom Scrollbar */
+@layer base {
+
+  :root,
+  [data-theme] {
+    --color-base-100: #030014;
+    --color-base-200: #0b0726;
+    --color-base-300: #120c37;
+    --color-base-content: #f3f4f6;
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  html,
+  body {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+    background-color: #030014;
+    color: #f3f4f6;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-heading {
+    font-family: var(--font-display);
+  }
+
+  /* Custom Modern Obsidian Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(3, 0, 20, 0.9);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(168, 85, 247, 0.6), rgba(99, 102, 241, 0.6));
+    border-radius: 6px;
+    border: 2px solid #030014;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(168, 85, 247, 0.9), rgba(99, 102, 241, 0.9));
   }
 }
 
-body {
-  margin: 0;
+/* Deep Obsidian Glass Cards */
+.glass-panel {
+  background: rgba(11, 7, 38, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.45);
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.glass-panel-hover {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.glass-panel-hover:hover {
+  background: rgba(18, 12, 55, 0.85);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 16px 45px -10px rgba(168, 85, 247, 0.35);
+  transform: translateY(-4px);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+/* Neon Glow Card Outline */
+.obsidian-card {
+  background: linear-gradient(145deg, rgba(15, 10, 48, 0.7), rgba(8, 5, 28, 0.8));
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 1.25rem;
+  transition: all 0.3s ease;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.obsidian-card:hover {
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.25);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Vibrant Gradient Text Classes */
+.text-gradient-purple-blue {
+  background: linear-gradient(135deg, #d8b4fe 0%, #c084fc 35%, #818cf8 70%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+}
+
+.text-gradient-electric {
+  background: linear-gradient(135deg, #e879f9 0%, #a855f7 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Background Grid Overlay Pattern */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center;
+}
+
+/* Radial Glow Backdrops */
+.radial-glow-purple {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, transparent 70%);
+}
+
+.radial-glow-blue {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, transparent 70%);
+}
+
+.radial-glow-cyan {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, transparent 70%);
+}
+
+/* Electric Shiny Button */
+.btn-shiny {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shiny::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 70%);
+  transform: rotate(30deg);
+  transition: transform 0.8s ease;
+}
+
+.btn-shiny:hover::after {
+  transform: rotate(30deg) translate(50%, 50%);
 }
