@@ -129,9 +129,17 @@ const extractResumeDetailsFallback = (rawText) => {
 };
 
 const parseResume = async (file) => {
-  let text = "";
+  if (!file || !file.buffer) {
+    throw new Error("No file buffer provided for parsing");
+  }
+
+  let text;
 
   if (file.mimetype === "application/pdf") {
+    // Magic-byte signature check for PDF (%PDF -> 0x25, 0x50, 0x44, 0x46)
+    if (file.buffer.length < 4 || file.buffer.slice(0, 4).toString() !== "%PDF") {
+      throw new Error("Invalid file signature: File claims to be PDF but does not have valid PDF magic bytes");
+    }
     const pdfData = await pdfParse(file.buffer);
     text = pdfData.text || "";
   } else if (
@@ -139,6 +147,12 @@ const parseResume = async (file) => {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     file.mimetype === "application/msword"
   ) {
+    // Magic-byte check for DOCX (PK\x03\x04) or legacy DOC (\xD0\xCF\x11\xE0)
+    const isDocx = file.buffer.length >= 4 && file.buffer[0] === 0x50 && file.buffer[1] === 0x4B;
+    const isDoc = file.buffer.length >= 4 && file.buffer[0] === 0xD0 && file.buffer[1] === 0xCF;
+    if (!isDocx && !isDoc) {
+      throw new Error("Invalid file signature: File claims to be Word document but does not have valid magic bytes");
+    }
     const result = await mammoth.extractRawText({
       buffer: file.buffer,
     });

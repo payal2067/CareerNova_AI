@@ -27,6 +27,9 @@ export const startSimulation = async (req, res) => {
   try {
     const { targetRole, difficulty, resumeId, resumeData, jobDescription, missingKeywords, mode } = req.body;
     const userId = req.user?._id || req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: User authentication required" });
+    }
     const API_KEY = process.env.GEMINI_API_KEY?.trim();
 
     let candidateName = "";
@@ -36,10 +39,19 @@ export const startSimulation = async (req, res) => {
     let missingSkills = missingKeywords || [];
     let resumeDetails = null;
 
-    // Fetch resume from DB if resumeId is provided
+    // Fetch resume from DB if resumeId is provided with strict IDOR ownership verification
     if (resumeId) {
+      if (!mongoose.Types.ObjectId.isValid(resumeId)) {
+        return res.status(400).json({ success: false, message: "Invalid resume ID format" });
+      }
       try {
-        resumeDetails = await Resume.findById(resumeId);
+        const foundResume = await Resume.findById(resumeId);
+        if (foundResume) {
+          if (foundResume.userId && userId && foundResume.userId.toString() !== userId.toString()) {
+            return res.status(403).json({ success: false, message: "Forbidden: You do not have permission to access this resume" });
+          }
+          resumeDetails = foundResume;
+        }
       } catch (err) {
         console.error("Error fetching resume in startSimulation:", err.message);
       }
@@ -191,7 +203,7 @@ Return ONLY a JSON array. Each object format:
     }));
 
     const session = await InterviewSession.create({
-      userId: userId || new mongoose.Types.ObjectId(),
+      userId: userId,
       targetRole: roleStr,
       skillStack: skills.length ? skills : ["Software Development"],
       difficulty: difficulty || "intermediate",
@@ -217,8 +229,21 @@ export const evaluateAnswer = async (req, res) => {
     const { sessionId, questionId, answer, timeTaken, wasSkipped, inputMode } = req.body;
     const API_KEY = process.env.GEMINI_API_KEY?.trim();
 
+    const userId = req.user?._id || req.user?.id;
+    if (!mongoose.Types.ObjectId.isValid(sessionId)) {
+      return res.status(400).json({ success: false, message: "Invalid session ID format" });
+    }
+
     const session = await InterviewSession.findById(sessionId);
     if (!session) return res.status(404).json({ success: false, message: "Interview session not found" });
+
+    if (!session.userId || !userId || session.userId.toString() !== userId.toString()) {
+      return res.status(403).json({ success: false, message: "Forbidden: You do not own this session" });
+    }
+
+    if (typeof answer === "string" && answer.length > 10000) {
+      return res.status(400).json({ success: false, message: "Answer payload exceeds 10,000 character limit" });
+    }
 
     const question = session.questions.id(questionId);
     if (!question) return res.status(404).json({ success: false, message: "Question not found in session" });
@@ -348,8 +373,17 @@ export const submitAnswers = async (req, res) => {
     const { sessionId, proctoringScore, warnings } = req.body;
     const API_KEY = process.env.GEMINI_API_KEY?.trim();
 
+    const userId = req.user?._id || req.user?.id;
+    if (!mongoose.Types.ObjectId.isValid(sessionId)) {
+      return res.status(400).json({ success: false, message: "Invalid session ID format" });
+    }
+
     const session = await InterviewSession.findById(sessionId);
     if (!session) return res.status(404).json({ success: false, message: "Session not found" });
+
+    if (!session.userId || !userId || session.userId.toString() !== userId.toString()) {
+      return res.status(403).json({ success: false, message: "Forbidden: You do not own this session" });
+    }
 
     let totalScore = 0;
     let totalClarity = 0;
@@ -431,10 +465,13 @@ Provide a JSON object containing the overall key strengths (2 bullet points) and
       ];
     }
 
+    const cleanProctoringScore = typeof proctoringScore === "number" ? Math.max(0, Math.min(100, proctoringScore)) : 100;
+    const cleanWarnings = Array.isArray(warnings) ? warnings.slice(0, 50) : [];
+
     session.status = "completed";
     session.completedAt = new Date();
-    session.proctoringScore = proctoringScore !== undefined ? proctoringScore : 100;
-    session.warnings = warnings || [];
+    session.proctoringScore = cleanProctoringScore;
+    session.warnings = cleanWarnings;
 
     await InterviewSession.updateOne(
       { _id: session._id },
@@ -479,9 +516,13 @@ export const getSessionHistory = async (req, res) => {
 
 export const getSessionById = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid session ID format" });
+    }
     const session = await InterviewSession.findById(req.params.id);
     if (!session) return res.status(404).json({ success: false, message: "Session not found" });
-    if (session.userId && req.user?._id && session.userId.toString() !== req.user._id.toString()) {
+    const userId = req.user?._id?.toString() || req.user?.id?.toString();
+    if (!session.userId || !userId || session.userId.toString() !== userId) {
       return res.status(403).json({ success: false, message: "Forbidden: You do not own this session" });
     }
     return res.status(200).json({ success: true, session });

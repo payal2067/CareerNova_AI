@@ -22,6 +22,12 @@ export const AuthProtect = async (req, res, next) => {
     }
 
     const secret = process.env.JWT_SECRET?.trim();
+    if (!secret) {
+      const error = new Error("Authentication secret not configured");
+      error.statusCode = 500;
+      return next(error);
+    }
+
     const decode = await jwt.verify(token, secret);
     if (!decode || !decode.id) {
       const error = new Error("Invalid Token");
@@ -29,7 +35,8 @@ export const AuthProtect = async (req, res, next) => {
       return next(error);
     }
 
-    const verifiedUser = await User.findById(decode.id);
+    // Exclude password hash from req.user
+    const verifiedUser = await User.findById(decode.id).select("-password");
     if (!verifiedUser) {
       const error = new Error("Session Expired");
       error.statusCode = 401;
@@ -56,6 +63,12 @@ export const OTPAuthProtect = async (req, res, next) => {
     }
 
     const secret = process.env.JWT_SECRET?.trim();
+    if (!secret) {
+      const error = new Error("Authentication secret not configured");
+      error.statusCode = 500;
+      return next(error);
+    }
+
     const decode = await jwt.verify(token, secret);
     if (!decode || !decode.id) {
       const error = new Error("Session Expired");

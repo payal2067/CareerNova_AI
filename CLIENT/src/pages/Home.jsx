@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiTrendingUp, FiVideo, FiCheckCircle, FiAlertTriangle, FiCpu, FiMessageSquare, FiMic, FiArrowRight, FiSliders, FiUsers, FiTarget } from 'react-icons/fi';
+import { FiTrendingUp, FiVideo, FiCpu, FiArrowRight, FiSliders } from 'react-icons/fi';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -47,7 +47,6 @@ const Home = () => {
     };
 
     setSimAnswers(prev => [...prev, userMsg]);
-    const answer = simAnswerText;
     setSimAnswerText('');
     setSimCoachThinking(true);
 
@@ -388,7 +387,7 @@ const Home = () => {
           <section className="py-20 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
               <span className="text-xs font-bold uppercase tracking-wider text-violet-400">Step-by-Step Pathway</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-white">How PrepOrbit Works</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-white">How CareerNova_AI Works</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">

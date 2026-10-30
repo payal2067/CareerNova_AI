@@ -1,33 +1,32 @@
 import jwt from "jsonwebtoken";
 
+const isProduction = process.env.NODE_ENV === "production";
+
+export const getCookieOptions = (maxAgeMs) => ({
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  maxAge: maxAgeMs,
+});
+
 export const genToken = async (user, res) => {
-    const payload = { id: user._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const payload = { id: user._id };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    if (res) {
-        res.cookie("Oreo", token, {
-            httpOnly: true,
-            secure: false,
-            maxAge: 24 * 60 * 60 * 1000,
-            sameSite: "lax",
-        });
-    }
+  if (res) {
+    res.cookie("Oreo", token, getCookieOptions(24 * 60 * 60 * 1000));
+  }
 
-    return token;
+  return token;
 };
 
 export const genOTPToken = async (user, res) => {
-    const payload = { id: user._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "10m" }); // OTP token expires in 10 minutes
+  const payload = { id: user._id, isOtp: true };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "10m" }); // OTP token expires in 10 minutes
 
-    if (res) {
-        res.cookie("kitkat", token, {
-            httpOnly: true,
-            secure: false,
-            maxAge: 10 * 60 * 1000,
-            sameSite: "lax",
-        });
-    }
+  if (res) {
+    res.cookie("kitkat", token, getCookieOptions(10 * 60 * 1000));
+  }
 
-    return token;
+  return token;
 };

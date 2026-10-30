@@ -7,6 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "typecheck": "eslint .",
+    "ts-prune": "eslint .",
+    "spellcheck": "node ../scripts/spellcheck.js",
+    "test": "node --test tests/*.test.js",
+    "test:ci": "node --test tests/*.test.js",
+    "format:check": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {

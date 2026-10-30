@@ -1,17 +1,13 @@
 import express from "express";
-import multer from "multer";
 import parseResume from "../utils/parseResume.js";
 import matchJD from "../utils/matchJD.js";
 import Resume from "../models/resume.model.js";
 import { AuthProtect } from "../middleware/authMiddleware.js";
+import { uploadResume } from "../middleware/multer.js";
 
 const router = express.Router();
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-});
 
-router.post("/upload", AuthProtect, upload.single("resume"), async (req, res) => {
+router.post("/upload", AuthProtect, uploadResume.single("resume"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "Resume file is required" });

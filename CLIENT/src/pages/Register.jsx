@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -11,8 +11,7 @@ import {
   FiArrowRight,
   FiBriefcase,
   FiBookOpen,
-  FiAlertCircle,
-  FiCpu
+  FiAlertCircle
 } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -175,7 +174,7 @@ const Register = () => {
               </svg>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Create Account</h1>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1">Get started with your free personalized PrepOrbit account</p>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1">Get started with your free personalized CareerNova_AI account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

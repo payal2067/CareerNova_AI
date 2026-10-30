@@ -1,234 +1,225 @@
-# 🪐 PrepOrbit — Next-Gen AI Career Accelerator & Mock Interview Platform
+# 🚀 CareerNova_AI — Enterprise AI Career Accelerator & Mock Interview Platform
 
 <div align="center">
 
-![PrepOrbit Banner](https://img.shields.io/badge/PrepOrbit-AI%20Career%20Accelerator-6366f1?style=for-the-badge&logo=rocket)
+![CareerNova_AI Banner](https://img.shields.io/badge/CareerNova_AI-Enterprise%20Platform-6366f1?style=for-the-badge&logo=rocket)
+![Tests](https://img.shields.io/badge/Tests-18%2F18%20Passing-brightgreen?style=for-the-badge&logo=checkmarx)
+![ESLint](https://img.shields.io/badge/ESLint-0%20Errors%200%20Warnings-success?style=for-the-badge&logo=eslint)
 ![React 19](https://img.shields.io/badge/React-19.2-61dafb?style=for-the-badge&logo=react)
 ![Vite 8](https://img.shields.io/badge/Vite-8.2-646cff?style=for-the-badge&logo=vite)
 ![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.3-38bdf8?style=for-the-badge&logo=tailwindcss)
 ![Node.js](https://img.shields.io/badge/Node.js-v20-339933?style=for-the-badge&logo=nodedotjs)
 ![Express 5](https://img.shields.io/badge/Express-v5.2-000000?style=for-the-badge&logo=express)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47a248?style=for-the-badge&logo=mongodb)
-![Google Gemini AI](https://img.shields.io/badge/Google%20Gemini-AI%20Engine-8e44ad?style=for-the-badge&logo=google)
+![Google Gemini AI](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-8e44ad?style=for-the-badge&logo=google)
 
 </div>
 
 ---
 
-## 📌 Executive Summary
+## 📌 Overview
 
-**PrepOrbit** is a full-stack, enterprise-grade AI career platform designed to accelerate candidate job readiness. Built with a modern **Deep Obsidian** glassmorphism design system, PrepOrbit integrates Google Gemini AI to offer real-time ATS resume alignment, intelligent job description (JD) keyword gap analysis, AI bullet point re-engineering, and interactive roleplay mock interviews with **Coach Ava** featuring speech-to-text, text-to-speech, and vision-AI proctoring (eye-tracking, multi-person detection, and mobile phone detection).
+**CareerNova_AI** is a production-grade, enterprise-ready full-stack AI career platform designed to accelerate candidate job readiness and maximize interview success rates.
+
+Built using the MERN stack with a glassmorphism design system, CareerNova_AI integrates Google Gemini AI with local heuristic resilience to deliver:
+- **Real-Time ATS Resume Alignment**: Deep semantic comparison of resumes against target job descriptions with radial score meters and missing skill gap breakdowns.
+- **AI Mock Interview Room (Coach Ava)**: Live adaptive mock interview simulations featuring speech-to-text (STT), text-to-speech (TTS), and vision AI proctoring (head pose eye tracking, phone detection, and multi-person detection).
+- **AI Bullet Point Re-Engineering**: Transforms weak resume experience bullets into quantified, metric-driven achievements.
+- **Enterprise Security Architecture**: Dual authentication (HTTP cookies + Bearer tokens), IDOR-guarded endpoints, Helmet-grade security headers, sliding window rate-limiting, and sanitized error responses.
 
 ---
 
 ## 🏗 System Architecture
 
-![Architecture Diagram](file:///c:/Users/Abhi/Desktop/hackinmotion/HackInMotion-RICR-HIM-1082/architecture-diagram.png)
-
 ```
-                       +-------------------------------------------------------+
-                       |                    PREPORBIT CLIENT                   |
-                       |  (React 19 + Vite + Tailwind v4 + Speech/Vision AI)   |
-                       +---------------------------+---------------------------+
-                                                   |
-                                                   | HTTP / REST API (JWT)
-                                                   v
-                       +-------------------------------------------------------+
-                       |                   NODE.JS API GATEWAY                 |
-                       |          (Express 5 + Multer + PDF/DOCX Parser)       |
-                       +------------+------------------------------+-----------+
-                                    |                              |
-            Async Mongoose Schemas  |                              |  Gemini AI API Calls
-                                    v                              v
-                       +------------------------+      +------------------------+
-                       |     MONGODB ATLAS      |      |   GOOGLE GEMINI AI     |
-                       |  Users, Scans, Logs    |      | Generative Intelligence|
-                       +------------------------+      +------------------------+
+                       ┌────────────────────────────────────────────────────────┐
+                       │                   CAREERNOVA CLIENT                    │
+                       │   (React 19 + Vite 8 + Tailwind v4 + Speech/Vision)    │
+                       └───────────────────────────┬────────────────────────────┘
+                                                   │
+                                                   │ HTTP / REST (JWT Bearer / Cookie)
+                                                   ▼
+                       ┌────────────────────────────────────────────────────────┐
+                       │                  EXPRESS 5 API GATEWAY                 │
+                       │   Security Headers | Rate Limiting | Dual Auth Guard   │
+                       └─────────────┬────────────────────────────┬─────────────┘
+                                     │                            │
+             Async Mongoose Schemas  │                            │  Google Gemini 2.5 Flash
+             Compound Indexes (IXSCAN)│                           │  + Local Heuristic Fallback
+                                     ▼                            ▼
+                       ┌─────────────────────────┐  ┌───────────────────────────┐
+                       │      MONGODB ATLAS      │  │     GOOGLE GEMINI AI      │
+                       │  Users, Resumes, History│  │  Generative Intelligence  │
+                       └─────────────────────────┘  └───────────────────────────┘
 ```
 
 ---
 
-## ✨ Key Features
+## ✨ Core Platform Capabilities
 
-### 📄 1. ATS Resume Alignment & Keyword Scan
-* **Client-Side & Server-Side Document Parsing**: Extracts raw text from `.pdf` and `.docx` files seamlessly.
-* **Semantic Keyword Matching**: Compares candidate experience against target job descriptions to identify missing technical skills, frameworks, and seniority requirements.
-* **ATS Compatibility Score**: Computes a dynamic match percentage using radial SVG meters and categorizes job fit status (*High Relevance*, *Moderate Fit*, *Gap Deficit*).
+### 📄 1. ATS Resume Parsing & Semantic Keyword Matcher
+* Supports `.pdf` and `.docx` document uploads with strict MIME and file size validation (5MB).
+* Combines Google Gemini Generative AI with automated local regex and heuristic overlap fallback engines.
+* Generates matched skills, missing skills, categorized readiness ratings, and concrete improvement advice.
 
-### 🎙 2. AI Interactive Mock Interview Room (Coach Ava)
-* **Multi-Modal Challenge Modes**:
-  * ⌨️ **Text Mode**: Standard relaxed question-answering with code block evaluation.
-  * 🎙️ **Voice & Tone Mode**: Hands-free real-time Speech-to-Text (STT) and AI voice synthesis (TTS) with verbal confidence assessment.
-  * 📹 **Video & Vision Proctoring Mode**: Interactive camera view with live AI proctoring checks.
-* **Dynamic AI Coaching**: Powered by Google Gemini AI to continuously generate role-specific questions tailored to missing resume keywords and past candidate answers.
+### 🎙 2. Adaptive Mock Interview Simulation (Coach Ava)
+* **Text Mode**: Focuses on structured coding and technical responses.
+* **Voice Mode**: Live bidirectional Speech-to-Text (STT) and AI voice synthesis (TTS) with verbal confidence scoring.
+* **Vision Proctoring Mode**: TensorFlow.js / `coco-ssd` and `face-api.js` tracking eye contact, secondary persons, and mobile phone usage.
+* Protected against **Insecure Direct Object Reference (IDOR)** with user ownership checks on session updates and evaluation retrieval.
 
-### 👁 3. Live Vision AI Proctoring Engine
-* **Face Tracking & Eye Contact**: Utilizes `face-api.js` to track head pose orientation and maintain eye contact scores.
-* **Object & Distraction Detection**: Integrated TensorFlow.js / `coco-ssd` model detects unauthorized secondary individuals or cell phone usage during live interviews.
-* **Tab-Switch Safeguards**: Live counter alerts candidates upon losing browser window focus.
+### 📊 3. Candidate Analytics & PDF Export
+* Chronological Recharts visualization of candidate score progression over time.
+* Client-side PDF export with `html2pdf.js` for offline review.
 
-### ✍️ 4. AI Resume Bullet Point Rewriter
-* Takes weak or passive resume experience bullets and rewrites them into high-impact, metrics-driven achievements using action verbs tailored to specific job roles.
-
-### 📊 5. Candidate Dashboard & PDF Export
-* **Historical Trend Analysis**: Chronological Recharts visual line graphs tracking performance scores over time.
-* **PDF Report Generation**: Instant client-side PDF document downloads for offline review.
-
-### 🔒 6. Security & Authentication
-* JWT authentication via HTTP-Only Cookies and Bearer headers.
-* Password hashing via `bcrypt` with salt rounds.
-* NodeMailer email service with customized HTML OTP verification templates for password reset workflows.
+### 🛡 4. Enterprise Security & Observability
+* Dual authentication architecture compatible with browser localStorage and secure HTTP cookies.
+* Helmet-equivalent defensive HTTP headers (`nosniff`, `DENY`, `HSTS`, `X-Request-Id`).
+* In-memory sliding window rate-limiting: 25 requests/15m for authentication, 300 requests/15m for general APIs.
+* Native health probes (`/health`, `/health/ready`) with uptime, memory, and database status reporting.
 
 ---
 
 ## 🛠 Technology Stack
 
-### **Frontend (Client)**
-* **Framework**: React 19, React Router DOM v7
-* **Build Tool**: Vite 8
-* **Styling & Components**: Tailwind CSS v4, FlyonUI (Obsidian Glassmorphism Design System)
-* **Data Visualization**: Recharts
-* **Icons & Notifications**: React Icons, React Hot Toast
-* **AI & Document Libraries**: TensorFlow.js, COCO-SSD, Face-API.js, html2pdf.js, React Markdown
-
-### **Backend (Server)**
-* **Runtime & Framework**: Node.js v20, Express 5
-* **Database**: MongoDB Atlas via Mongoose 9
-* **Authentication**: JSON Web Token (JWT), Bcrypt
-* **Document Parsing**: `pdf-parse`, `pdf2json`, `mammoth`
-* **File Uploads**: Multer
-* **Email Service**: NodeMailer
-
-### **AI Services**
-* **Google Gemini AI SDK**: `@google/generative-ai`, `@google-cloud/aiplatform`
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, Vite 8, Tailwind CSS v4, FlyonUI, Recharts, React Router DOM v7 |
+| **Backend** | Node.js 20, Express 5, Multer, `pdf-parse`, `mammoth`, Nodemailer |
+| **Database** | MongoDB Atlas, Mongoose 9 ODM (with compound indexing) |
+| **AI & ML** | Google Gemini AI (`gemini-2.5-flash`), TensorFlow.js, COCO-SSD, Face-API.js |
+| **Testing** | Node.js Native Test Runner (`node:test`, `node:assert/strict`) — 18/18 passing |
+| **CI / CD** | GitHub Actions (`.github/workflows/ci.yml`), ESLint |
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-HackInMotion-RICR-HIM-1082/
-├── client/                      # React 19 Frontend Application
-│   ├── public/                  # Static assets & icons
+CareerNovaAI/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                   # CI/CD Pipeline (Lint, Test, Build)
+├── CLIENT/                          # React 19 Frontend Application
 │   ├── src/
-│   │   ├── assets/              # Branding & media assets
-│   │   ├── components/          # Reusable UI components (Navbar, Footer, Modals)
-│   │   ├── config/              # Axios API instance & base URLs
-│   │   ├── context/             # AuthContext state management
-│   │   ├── pages/               # Application routes (Home, Analyze, Interview, Dashboard, Login, Register, Feedback)
-│   │   ├── App.jsx              # Router configuration
-│   │   ├── index.css            # Tailwind CSS v4 & custom obsidian tokens
-│   │   └── main.jsx             # React DOM entrypoint
-│   ├── index.html               # Main HTML container
-│   ├── package.json             # Frontend dependencies
-│   └── vite.config.js           # Vite build configuration
-│
-├── server/                      # Node.js + Express Backend API
+│   │   ├── components/              # UI Components, Modals, and ErrorBoundary
+│   │   ├── config/                  # Axios instance with Bearer interceptor
+│   │   ├── context/                 # AuthContext & ThemeContext
+│   │   ├── pages/                   # Home, Dashboard, Interview, Analyze, NotFound
+│   │   ├── App.jsx                  # Application Routes & Error Boundary
+│   │   └── main.jsx                 # Client entry point
+│   ├── tests/                       # Frontend validation tests
+│   ├── package.json                 # Client dependencies & scripts
+│   └── vite.config.js               # Vite 8 build configuration
+├── SERVER/                          # Express 5 Backend API
 │   ├── src/
-│   │   ├── config/              # MongoDB connection & Email transporter
-│   │   ├── controllers/         # Request handling logic (Auth, Resume, Interview, AI)
-│   │   ├── middleware/          # JWT Auth verification & Multer file handler
-│   │   ├── models/              # Mongoose database schemas (User, Resume, InterviewSession)
-│   │   ├── router/              # REST Express routes
-│   │   └── utils/               # AI prompts, JD matching algorithms & NodeMailer service
-│   ├── .env                     # Environment variables configuration
-│   ├── index.js                 # Express server startup entrypoint
-│   └── package.json             # Backend dependencies
-│
-├── api-documentation.md         # Comprehensive REST API specifications
-├── architecture-diagram.png     # Visual system architecture diagram
-└── README.md                    # Project documentation
+│   │   ├── config/                  # MongoDB & Nodemailer configuration
+│   │   ├── controller/              # Auth, Resume, AI, and Interview controllers
+│   │   ├── middleware/              # AuthProtect, Security Headers, Rate Limiting
+│   │   ├── models/                  # User, Resume, and InterviewSession schemas
+│   │   ├── router/                  # REST route definitions
+│   │   └── utils/                   # Gemini AI prompts, PDF parsers, JD matchers
+│   ├── tests/                       # Backend unit and integration tests
+│   ├── index.js                     # Express app configuration & server startup
+│   └── package.json                 # Backend dependencies & scripts
+├── docs/                            # Comprehensive Documentation & Audit Reports
+│   ├── CAREERNOVA_CHECKLIST.md      # 36-Point Enterprise Quality Checklist
+│   ├── CAREERNOVA_AUDIT_REPORT.md   # Comprehensive Architecture Audit Report
+│   ├── SECURITY_AUDIT.md            # OWASP Top 10 Security Audit
+│   ├── SECURITY_CHECKLIST.md        # Enterprise Security Checklist
+│   ├── SECURITY_FIXES.md            # Security Fixes & Technical Log
+│   ├── SECURITY_TEST_REPORT.md      # Security Test Execution Report
+│   ├── PERFORMANCE_REPORT.md        # Bundle Size & Latency Analysis
+│   ├── TESTING_REPORT.md            # Test Suite Results & Coverage
+│   ├── DEPLOYMENT_GUIDE.md          # Production Deployment & Ops Runbook
+│   └── api-documentation.md         # REST API Endpoint Specifications
+├── README.md                        # Master Project Documentation
+└── CHANGELOG.md                     # Detailed Engineering Changelog
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start Guide
 
 ### Prerequisites
-* **Node.js**: v18.0.0 or higher
-* **npm**: v9.0.0 or higher
+* **Node.js**: v20.x or higher
+* **npm**: v10.x or higher
 * **MongoDB**: Active MongoDB Atlas URI or local instance
-* **Google Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
 
----
-
-### 📥 1. Installation
-
-Clone the repository to your local machine:
+### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/Satakshivdhy/HackInMotion-RICR-HIM-1082.git
-cd HackInMotion-RICR-HIM-1082
-```
+# Clone the repository
+git clone https://github.com/your-org/CareerNova_AI.git
+cd CareerNovaAI
 
----
-
-### ⚙️ 2. Server Configuration & Setup
-
-Navigate to the `server` directory and install dependencies:
-```bash
-cd server
+# Install monorepo dependencies
 npm install
+cd CLIENT && npm install
+cd ../SERVER && npm install
+cd ..
 ```
 
-Create a `.env` file inside the `server/` directory:
-```env
-PORT=4500
-MONGO_DB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-GEMINI_API_KEY=your_google_gemini_api_key
+### 2. Configure Environment Variables
+* Configure backend settings in `SERVER/.env` (see `SERVER/.env.example`):
+  ```env
+  PORT=4500
+  NODE_ENV=development
+  MONGO_URL=mongodb+srv://<username>:<password>@cluster0.mongodb.net/careernova
+  JWT_SECRET=your_super_secret_jwt_key
+  CLIENT_URL=http://localhost:5173
+  EMAIL=your_email@gmail.com
+  EMAIL_PASSWORD=your_app_password
+  GEMINI_API_KEY=your_gemini_api_key
+  GEMINI_MODEL=gemini-2.5-flash
+  ```
+* Configure frontend settings in `CLIENT/.env` (see `CLIENT/.env.example`):
+  ```env
+  VITE_API_URL=http://localhost:4500
+  ```
 
-# NodeMailer configuration (Optional for OTP email reset)
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_email_app_password
-```
-
-Start the backend development server:
+### 3. Run Quality Verification & Tests
 ```bash
-npm run dev
-```
-The server will start running at `http://localhost:4500`.
+# Run linting across the monorepo (0 errors, 0 warnings)
+npm run lint
 
----
+# Run all 18 automated tests
+npm test
 
-### 💻 3. Client Configuration & Setup
-
-Open a new terminal window, navigate to the `client` directory, and install dependencies:
-```bash
-cd ../client
-npm install
+# Build client production bundle (277 kB gzipped)
+npm run build
 ```
 
-Start the Vite frontend server:
-```bash
-npm run dev
-```
-The frontend application will open at `http://localhost:5173`.
+### 4. Start Development Servers
+* **Backend API**:
+  ```bash
+  cd SERVER
+  npm run dev   # Starts Express server on http://localhost:4500
+  ```
+* **Frontend Client**:
+  ```bash
+  cd CLIENT
+  npm run dev   # Starts Vite dev server on http://localhost:5173
+  ```
 
 ---
 
-## 🔌 Core API Endpoints
+## 📊 Comprehensive Audit & Quality Reports
 
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Public | Registers a new user account |
-| `POST` | `/api/auth/login` | Public | Authenticates user & returns JWT token |
-| `GET`  | `/api/auth/me` | Protected | Returns authenticated user profile |
-| `POST` | `/api/resume/upload` | Protected | Parses resume file & calculates JD match score |
-| `POST` | `/api/ai/rewrite-bullet` | Protected | Re-engineers resume bullet points via Gemini AI |
-| `POST` | `/api/interview/start` | Protected | Initializes an AI mock interview session |
-| `POST` | `/api/interview/submit-answer` | Protected | Evaluates candidate answer & returns feedback |
-| `POST` | `/api/feedback` | Public | Submits user platform feedback |
-
-
----
-
-## 🎨 Design System
-
-PrepOrbit utilizes an Obsidian Dark Mode aesthetic (`#030014`) with glassmorphic cards (`backdrop-filter: blur(18px)`), vibrant electric purple accents (`#a855f7`), cyan highlights (`#06b6d4`), and modern typography powered by **Outfit** and **Plus Jakarta Sans** Google Fonts.
+The codebase has undergone a full enterprise audit adhering to the 36-point standard. All detailed documentation is organized in the [`docs/`](docs/) directory:
+* [36-Point Enterprise Checklist](docs/CAREERNOVA_CHECKLIST.md)
+* [Comprehensive Architecture Audit Report](docs/CAREERNOVA_AUDIT_REPORT.md)
+* [Security & OWASP Top 10 Audit](docs/SECURITY_AUDIT.md)
+* [Enterprise Security Checklist](docs/SECURITY_CHECKLIST.md)
+* [Security Fixes & Technical Log](docs/SECURITY_FIXES.md)
+* [Security Test Execution Report](docs/SECURITY_TEST_REPORT.md)
+* [Performance & Optimization Report](docs/PERFORMANCE_REPORT.md)
+* [Testing & Quality Verification Report](docs/TESTING_REPORT.md)
+* [Production Deployment Guide](docs/DEPLOYMENT_GUIDE.md)
+* [REST API Documentation](docs/api-documentation.md)
+* [Changelog](CHANGELOG.md)
 
 ---
 
-## 📜 License & Credits
+## 📜 License & Compliance
 
-Developed with ❤️ by **Team HackInMotion-1082**.
-Distributed under the **ISC License**.
+Licensed under the MIT License. Developed for enterprise-grade scalability, security, and developer productivity.

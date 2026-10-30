@@ -19,7 +19,7 @@ const sendEmail = async (to, subject, message) => {
     });
 
     const mailOption = {
-      from: `"PrepOrbit" <${user}>`,
+      from: `"CareerNova_AI" <${user}>`,
       to,
       subject,
       html: message,

@@ -91,6 +91,9 @@ const resumeSchema = new mongoose.Schema(
   }
 );
 
+// Optimize resume listing & analytics query performance
+resumeSchema.index({ userId: 1, createdAt: -1 });
+
 const Resume = mongoose.model("Resume", resumeSchema);
 
 export default Resume;

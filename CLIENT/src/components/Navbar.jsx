@@ -1,6 +1,5 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiCpu, FiTrendingUp, FiVideo, FiMenu, FiGrid, FiUser, FiLogOut, FiMessageSquare } from 'react-icons/fi';
+import { FiTrendingUp, FiVideo, FiMenu, FiGrid, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 const Navbar = () => {
   const navigate = useNavigate();

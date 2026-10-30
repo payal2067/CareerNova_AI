@@ -230,6 +230,10 @@ const interviewSessionSchema = new mongoose.Schema(
   }
 );
 
+// Compound indexes for history charts and status queries
+interviewSessionSchema.index({ userId: 1, createdAt: 1 });
+interviewSessionSchema.index({ userId: 1, status: 1 });
+
 const InterviewSession = mongoose.model(
   "InterviewSession",
   interviewSessionSchema

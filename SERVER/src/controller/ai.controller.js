@@ -43,13 +43,15 @@ export const analyzeResume = async (req, res) => {
     }
 
     let rawText = "";
-    const desiredRole = req.body.targetRole || "General Learner";
+    const desiredRole = typeof req.body.targetRole === "string"
+      ? req.body.targetRole.trim().slice(0, 100)
+      : "General Learner";
 
-    // 1. PDF Text Extraction
-    rawText = req.body.resumeText;
+    // 1. PDF Text Extraction with type guard
+    rawText = typeof req.body.resumeText === "string" ? req.body.resumeText : "";
 
     if (!rawText || rawText.trim().length < 50) {
-      return res.status(400).json({ success: false, message: "Bhai, resume content bohot kam hai!" });
+      return res.status(400).json({ success: false, message: "Resume content must be at least 50 characters long." });
     }
 
     // ✅ SPEED FIX: Trim resume to max 3000 chars — LLM ko zyada context ki zarurat nahi
@@ -193,22 +195,26 @@ export const rewriteBulletPoints = async (req, res) => {
     const API_KEY = process.env.GEMINI_API_KEY?.trim();
     const { bulletPoint, targetRole, jobDescription } = req.body;
 
-    if (!bulletPoint) {
-      return res.status(400).json({ success: false, message: "Bullet point text is required." });
+    if (typeof bulletPoint !== "string" || !bulletPoint.trim()) {
+      return res.status(400).json({ success: false, message: "Valid bullet point text is required." });
     }
+
+    const cleanBullet = bulletPoint.trim().slice(0, 1000);
+    const cleanRole = typeof targetRole === "string" ? targetRole.trim().slice(0, 100) : "Software Engineer";
+    const cleanJD = typeof jobDescription === "string" ? jobDescription.trim().slice(0, 1000) : "";
 
     if (!API_KEY) {
       return res.status(200).json({
         success: true,
         improvedBullets: [
-          `Architected and deployed scalable solutions for ${targetRole || "the role"}, reducing system latency by 35%.`,
+          `Architected and deployed scalable solutions for ${cleanRole}, reducing system latency by 35%.`,
           `Spearheaded the development of key modules, improving overall team delivery velocity by 25%.`,
           `Optimized application workflow and codebase structure, leading to a 40% reduction in user-reported bugs.`
         ]
       });
     }
 
-    const prompt = `Rewrite the following resume bullet point to make it strong, action-oriented, metrics-driven, and aligned with the role of "${targetRole || 'Software Engineer'}".\n\nOriginal Bullet Point: "${bulletPoint}"\nTarget Role / Context: "${jobDescription || targetRole || ''}"\n\nReturn ONLY a JSON array containing 3 improved variations (strong action verb + core task + measurable metric outcome). No markdown, no extra commentary.\nExample output format:\n["Variation 1", "Variation 2", "Variation 3"]`;
+    const prompt = `Rewrite the following resume bullet point to make it strong, action-oriented, metrics-driven, and aligned with the role of "${cleanRole}".\n\nOriginal Bullet Point: "${cleanBullet}"\nTarget Role / Context: "${cleanJD || cleanRole}"\n\nReturn ONLY a JSON array containing 3 improved variations (strong action verb + core task + measurable metric outcome). No markdown, no extra commentary.\nExample output format:\n["Variation 1", "Variation 2", "Variation 3"]`;
 
     const responseText = await callGemini(API_KEY, ANALYZE_MODEL, prompt, {
       temperature: 0.7,

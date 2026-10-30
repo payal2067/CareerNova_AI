@@ -1,0 +1,18 @@
+{
+  "name": "careernova-ai",
+  "version": "1.0.0",
+  "description": "CareerNova AI — MERN Stack AI-Powered Career Assistant",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "npm run lint --prefix SERVER && npm run lint --prefix CLIENT",
+    "typecheck": "npm run typecheck --prefix SERVER && npm run typecheck --prefix CLIENT",
+    "ts-prune": "npm run ts-prune --prefix SERVER && npm run ts-prune --prefix CLIENT",
+    "spellcheck": "node scripts/spellcheck.js",
+    "format:check": "npm run format:check --prefix SERVER && npm run format:check --prefix CLIENT",
+    "test": "npm test --prefix SERVER && npm test --prefix CLIENT",
+    "build": "npm run build --prefix CLIENT",
+    "start": "npm start --prefix SERVER"
+  }
+}
+

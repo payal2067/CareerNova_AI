@@ -2,7 +2,7 @@ import sendEmail from "../config/email.config.js";
 
 export const sendOTPEmail = async (email, newOTP) => {
   try {
-    const subject = "Your OTP from PrepOrbit";
+    const subject = "Your OTP from CareerNova_AI";
 
     const message = `
 <!DOCTYPE html>
@@ -10,7 +10,7 @@ export const sendOTPEmail = async (email, newOTP) => {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PrepOrbit - Password Reset OTP</title>
+    <title>CareerNova_AI - Password Reset OTP</title>
 </head>
 
 <body style="margin:0;padding:0;background-color:#030014;font-family:Arial,Helvetica,sans-serif;">
@@ -26,7 +26,7 @@ export const sendOTPEmail = async (email, newOTP) => {
                         <td align="center" style="background:#6366f1;padding:35px 25px;">
 
                             <h1 style="margin:0 auto 10px auto;color:#ffffff;font-size:32px;letter-spacing:1px;font-weight:900;">
-                                PrepOrbit
+                                CareerNova_AI
                             </h1>
 
                             <p style="margin:12px 0 0;color:#e0e7ff;font-size:16px;line-height:24px;">
@@ -50,7 +50,7 @@ export const sendOTPEmail = async (email, newOTP) => {
 
                             <p style="margin:0 0 25px;color:#cbd5e1;font-size:16px;line-height:28px;">
                                 We received a request to reset the password for your
-                                <strong style="color:#f8fafc;">PrepOrbit</strong> account.
+                                <strong style="color:#f8fafc;">CareerNova_AI</strong> account.
                                 Use the One-Time Password (OTP) below to continue.
                             </p>
 
@@ -99,7 +99,7 @@ export const sendOTPEmail = async (email, newOTP) => {
                         <td align="center" style="padding:30px 35px;background:#0f172a;border-top:1px solid rgba(255,255,255,0.05);">
 
                             <h2 style="margin:0 auto 12px auto;color:#818cf8;font-size:24px;font-weight:800;">
-                                PrepOrbit
+                                CareerNova_AI
                             </h2>
 
                             <p style="margin:12px 0 0;color:#94a3b8;font-size:14px;line-height:24px;">
@@ -107,7 +107,7 @@ export const sendOTPEmail = async (email, newOTP) => {
                             </p>
 
                             <p style="margin:20px 0 0;color:#64748b;font-size:12px;line-height:20px;">
-                                © 2026 PrepOrbit. All Rights Reserved.
+                                © 2026 CareerNova_AI. All Rights Reserved.
                                 <br>
                                 This is an automated email. Please do not reply.
                             </p>

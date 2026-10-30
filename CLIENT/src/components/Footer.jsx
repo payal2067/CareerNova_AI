@@ -1,5 +1,4 @@
-import React from 'react';
-import { FiGithub, FiTwitter, FiLinkedin, FiMail } from 'react-icons/fi';
+import { FiGithub, FiTwitter, FiLinkedin } from 'react-icons/fi';
 
 const Footer = () => {
   return (
@@ -58,7 +57,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <span>&copy; {new Date().getFullYear()} PrepOrbit. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} CareerNova_AI. All rights reserved.</span>
           <div className="flex space-x-6">
             <a href="#" className="hover:text-gray-300">Privacy Policy</a>
             <a href="#" className="hover:text-gray-300">Terms of Service</a>

@@ -33,9 +33,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      const currentPath = window.location.pathname;
+      const currentPath = typeof window !== 'undefined' ? window.location?.pathname : '';
       // If unauthorized on protected routes, purge stale session
-      if (currentPath !== '/login' && currentPath !== '/register') {
+      if (currentPath && currentPath !== '/login' && currentPath !== '/register') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -7,9 +7,7 @@ import {
   FiEye,
   FiEyeOff,
   FiArrowRight,
-  FiCpu,
-  FiAlertCircle,
-  FiCheckCircle
+  FiAlertCircle
 } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -106,7 +104,7 @@ const Login = () => {
               </svg>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Welcome Back</h1>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1">Sign in to your PrepOrbit account</p>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1">Sign in to your CareerNova_AI account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

@@ -1,24 +1,45 @@
- # Dependencies
+# Dependencies
 node_modules/
+CLIENT/node_modules/
+SERVER/node_modules/
 client/node_modules/
 server/node_modules/
 
-# Environment Variables
+# Environment Variables & Secrets
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-server/.env
-client/.env
+.env.*
+!.env.example
+CLIENT/.env
+CLIENT/.env.*
+!CLIENT/.env.example
+SERVER/.env
+SERVER/.env.*
+!SERVER/.env.example
 
-# Build & Logs
+# Production Builds & Bundles
 dist/
+CLIENT/dist/
 build/
+CLIENT/build/
+
+# Logs & Runtime Diagnostics
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# IDE & OS
+# Test Coverage
+coverage/
+.nyc_output/
+
+# IDE, OS & System Metadata
 .vscode/
+!.vscode/extensions.json
 .idea/
 .DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

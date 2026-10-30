@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
-  FiMessageSquare, FiMic, FiMicOff, FiSend, FiAward, FiSettings,
-  FiCheck, FiVideo, FiCornerDownRight, FiVolume2, FiAlertCircle,
-  FiTrendingUp, FiArrowLeft, FiCheckCircle, FiClock, FiX, FiBarChart2
+  FiMessageSquare, FiMic, FiMicOff, FiSend, FiAward,
+  FiVideo, FiCornerDownRight, FiVolume2, FiAlertCircle,
+  FiTrendingUp, FiArrowLeft, FiCheckCircle, FiX, FiBarChart2
 } from 'react-icons/fi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Navbar from '../components/Navbar';
@@ -11,12 +10,15 @@ import Footer from '../components/Footer';
 import api from '../config/ApiConfig';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import html2pdf from 'html2pdf.js';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+const calculateElapsedTime = (startTime) => {
+  if (!startTime) return 0;
+  return Math.max(0, Math.round((Date.now() - startTime) / 1000));
+};
+
 const Interview = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   // View control: 'lobby' | 'chat' | 'report' | 'history'
@@ -56,7 +58,7 @@ const Interview = () => {
 
   // Silence / Timer States
   const [silenceTimeLeft, setSilenceTimeLeft] = useState(10);
-  const [isSpeechSupported, setIsSpeechSupported] = useState(true);
+  const [isSpeechSupported] = useState(() => typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition));
   const [isCoachSpeaking, setIsCoachSpeaking] = useState(false);
 
   // History & Report States
@@ -160,15 +162,12 @@ const Interview = () => {
 
   // Rotate loader messages during initial session creation
   useEffect(() => {
-    let interval;
-    if (loading && view === 'lobby') {
-      setLoaderMessageIndex(0);
-      interval = setInterval(() => {
-        setLoaderMessageIndex((prev) => (prev + 1) % loaderMessages.length);
-      }, 1400);
-    }
+    if (!loading || view !== 'lobby') return;
+    const interval = setInterval(() => {
+      setLoaderMessageIndex((prev) => (prev + 1) % loaderMessages.length);
+    }, 1400);
     return () => clearInterval(interval);
-  }, [loading, view]);
+  }, [loading, view, loaderMessages.length]);
 
   // Auto-scroll chat history to the bottom without page-level scroll
   useEffect(() => {
@@ -185,12 +184,27 @@ const Interview = () => {
     liveTranscriptRef.current = liveTranscript;
   }, [liveTranscript]);
 
+  const stopListening = useCallback(() => {
+    isVoiceActiveRef.current = false;
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.log("Recognition stop error:", e.message);
+      }
+    }
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
+  }, []);
+
   // Speech Recognition Setup (Web Speech API)
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
     if (!SpeechRecognition) {
-      setIsSpeechSupported(false);
-      setInputMode('text');
       return;
     }
 
@@ -243,14 +257,15 @@ const Interview = () => {
     return () => {
       stopListening();
     };
-  }, []);
+  }, [stopListening]);
 
   // AI Proctoring Setup (Only runs in video mode)
   useEffect(() => {
+    const videoElement = videoRef.current;
     if (view !== 'chat' || interviewMode !== 'video') {
       if (proctorIntervalRef.current) clearInterval(proctorIntervalRef.current);
-      if (videoRef.current && videoRef.current.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      if (videoElement && videoElement.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
       }
       return;
     }
@@ -322,7 +337,9 @@ const Interview = () => {
                 if (detections && detections.length > 1) {
                   newWarning = `Multiple faces detected (${detections.length} faces)!`;
                 }
-              } catch (e) {}
+              } catch {
+                // Ignore transient frame detection errors
+              }
             }
           } catch (detErr) {
             console.error("Proctoring detection frame error:", detErr.message);
@@ -361,11 +378,11 @@ const Interview = () => {
     return () => {
       isMounted = false;
       if (proctorIntervalRef.current) clearInterval(proctorIntervalRef.current);
-      if (videoRef.current && videoRef.current.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+      if (videoElement && videoElement.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
       }
     };
-  }, [view]);
+  }, [view, interviewMode]);
 
   const startListening = () => {
     if (!recognitionRef.current) return;
@@ -379,22 +396,7 @@ const Interview = () => {
     if (resetSilenceTimerRef.current) resetSilenceTimerRef.current('');
   };
 
-  const stopListening = () => {
-    isVoiceActiveRef.current = false;
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {
-        console.log("Recognition stop error:", e.message);
-      }
-    }
-    if (silenceTimerRef.current) {
-      clearTimeout(silenceTimerRef.current);
-    }
-    if (countdownIntervalRef.current) {
-      clearInterval(countdownIntervalRef.current);
-    }
-  };
+
 
   const resetSilenceTimer = (currentText) => {
     if (interviewMode === 'text') return; // Active in Voice & Video modes
@@ -543,7 +545,7 @@ const Interview = () => {
     setIsEvaluating(true);
     isEvaluatingRef.current = true;
 
-    const timeTaken = Math.round((Date.now() - questionStartTimeRef.current) / 1000);
+    const timeTaken = calculateElapsedTime(questionStartTimeRef.current);
     const currentQ = questions[currentQuestionIndex];
 
     const displayAnswer = wasSkipped ? "Skipped" : answerText;
@@ -709,14 +711,16 @@ const Interview = () => {
     return `${m}m ${s}s`;
   };
 
-  // Fix closure trap by keeping refs up to date in each render
-  submitAnswerRef.current = submitAnswer;
-  resetSilenceTimerRef.current = resetSilenceTimer;
-  handleSubmitInterviewRef.current = handleSubmitInterview;
+  // Fix closure trap by keeping refs up to date after render
+  useEffect(() => {
+    submitAnswerRef.current = submitAnswer;
+    resetSilenceTimerRef.current = resetSilenceTimer;
+    handleSubmitInterviewRef.current = handleSubmitInterview;
+  });
 
   const handleDownloadPDF = () => {
     const style = document.createElement('style');
-    style.innerHTML = `
+    style.textContent = `
       @media print {
         nav, footer, #interview-action-buttons { display: none !important; }
         main { padding-top: 0 !important; margin-top: 0 !important; }
@@ -1013,8 +1017,7 @@ const Interview = () => {
                             <ReactMarkdown
                               remarkPlugins={[remarkGfm]}
                               components={{
-                                code({node, inline, className, children, ...props}) {
-                                  const match = /language-(\w+)/.exec(className || '');
+                                code({inline, className, children, ...props}) {
                                   return !inline ? (
                                     <pre className="bg-[#0a0718] p-3 rounded-lg overflow-x-auto border border-white/10 my-3 font-mono text-xs">
                                       <code className={className} {...props}>
@@ -1709,7 +1712,7 @@ const Interview = () => {
                     <div className="w-full h-72">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart
-                          data={historyData.map((session, index) => ({
+                          data={historyData.map((session) => ({
                             name: new Date(session.completedAt || session.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' }),
                             Score: session.overallScore
                           }))}
@@ -1755,7 +1758,7 @@ const Interview = () => {
                                     setSessionReport(res.data.session);
                                     setView('report');
                                   }
-                                } catch (e) {
+                                } catch {
                                   toast.error("Failed to load session report");
                                 } finally {
                                   setLoading(false);

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../config/ApiConfig';
 import {
-  FiUser, FiTrendingUp, FiVideo, FiAward, FiClock,
-  FiCheckCircle, FiAlertTriangle, FiArrowRight, FiFileText, FiRefreshCw, FiEdit3, FiBarChart2
+  FiUser, FiTrendingUp, FiVideo, FiAward,
+  FiArrowRight, FiFileText, FiRefreshCw, FiEdit3, FiBarChart2
 } from 'react-icons/fi';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Navbar from '../components/Navbar';
@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   const [resumeHistory, setResumeHistory] = useState([]);
   const [interviewHistory, setInterviewHistory] = useState([]);

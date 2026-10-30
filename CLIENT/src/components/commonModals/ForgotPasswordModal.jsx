@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { LuLoaderCircle } from "react-icons/lu";
