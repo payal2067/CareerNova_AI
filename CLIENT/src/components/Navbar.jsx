@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiTrendingUp, FiVideo, FiMenu, FiGrid, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import ThemeSwitcher from './ThemeSwitcher';
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,6 +71,7 @@ const Navbar = () => {
 
           {/* User Auth Buttons / Profile badge */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeSwitcher />
             {user ? (
               <div className="flex items-center gap-3">
                 <button
@@ -115,7 +117,8 @@ const Navbar = () => {
 
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeSwitcher />
             <button className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors focus:outline-none">
               <FiMenu size={20} />
             </button>

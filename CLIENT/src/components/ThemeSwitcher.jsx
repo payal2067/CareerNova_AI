@@ -1,34 +1,23 @@
+import { FiSun, FiMoon } from 'react-icons/fi';
 import { useTheme } from '../context/ThemeContext';
 
-const themes = [
-  { id: 'dark', label: 'Dark' },
-
-];
-
 const ThemeSwitcher = () => {
-  const { theme, setTheme } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
 
   return (
-    <div className="flex items-center gap-2">
-      <select
-        value={theme}
-        onChange={(e) => setTheme(e.target.value)}
-        className="appearance-none bg-white/5 border border-white/10 hover:border-indigo-500/50 text-gray-200 text-xs font-semibold rounded-xl px-3 py-1.5 outline-none transition-colors cursor-pointer"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-          backgroundPosition: 'right 0.5rem center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: '1.5em 1.5em',
-          paddingRight: '2rem'
-        }}
-      >
-        {themes.map((t) => (
-          <option key={t.id} value={t.id} className="bg-gray-900 text-gray-200">
-            {t.label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <button
+      onClick={toggleTheme}
+      type="button"
+      className="p-2 rounded-xl text-gray-400 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 transition-all duration-200 cursor-pointer focus:outline-none border border-white/10 dark:border-white/10 bg-white/5 dark:bg-white/5 flex items-center justify-center shadow-sm"
+      title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+      aria-label={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
+    >
+      {isDark ? (
+        <FiSun className="w-4 h-4 text-amber-400 hover:rotate-45 transition-transform duration-300" />
+      ) : (
+        <FiMoon className="w-4 h-4 text-indigo-500 hover:-rotate-12 transition-transform duration-300" />
+      )}
+    </button>
   );
 };
 
