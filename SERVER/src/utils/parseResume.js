@@ -3,42 +3,11 @@ const require = createRequire(import.meta.url);
 // Import directly from lib/pdf-parse.js to avoid debug test execution in index.js under ESM
 const pdfParse = require("pdf-parse/lib/pdf-parse.js");
 import mammoth from "mammoth";
-
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+import { callGeminiWithFallback } from "./gemini.service.js";
 
 const callGemini = async (prompt) => {
-  const apiKey = process.env.GEMINI_API_KEY?.trim();
-
-  if (!apiKey) {
-    throw new Error("GEMINI_API_KEY is missing in .env");
-  }
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: prompt }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.2,
-      },
-    }),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data?.error?.message || "Gemini API failed");
-  }
-
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  const { text } = await callGeminiWithFallback(null, prompt, { temperature: 0.2 });
+  return text;
 };
 
 const COMMON_SKILLS = [

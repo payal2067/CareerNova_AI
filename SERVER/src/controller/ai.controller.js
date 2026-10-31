@@ -1,38 +1,10 @@
-import axios from "axios";
 import Resume from "../models/resume.model.js";
+import { callGeminiWithFallback } from "../utils/gemini.service.js";
 
-// ─────────────────────────────────────────────────────────
-// Model Config
-// gemini-2.5-pro is a "thinking" model — by default it uses
-// internal reasoning tokens which makes it SLOW (20+ sec).
-// thinkingConfig: { thinkingBudget: 0 } disables that → 6-9 sec
-// ─────────────────────────────────────────────────────────
-const ANALYZE_MODEL = "gemini-2.5-flash";
-
-// ✅ Suppress pdf2json stderr noise - skipped because we don't have pdf2json
-
-// ✅ Safe Gemini caller — proper validation at every step
-const callGemini = async (API_KEY, model, prompt, generationConfig) => {
-  const response = await axios.post(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`,
-    {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig
-    },
-    { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
-  );
-
-  const data = response.data;
-  if (!data) throw new Error("Gemini returned empty response body");
-  if (data.error) throw new Error(`Gemini API Error: ${data.error.message}`);
-  if (!data.candidates || data.candidates.length === 0) {
-    throw new Error(`Gemini returned no candidates. Block reason: ${data.promptFeedback?.blockReason || 'Unknown'}`);
-  }
-  const candidate = data.candidates[0];
-  if (!candidate.content?.parts?.length) {
-    throw new Error(`Gemini candidate empty. Finish reason: ${candidate.finishReason || 'Unknown'}`);
-  }
-  return candidate.content.parts[0].text;
+// ✅ Safe Gemini caller — uses resilient multi-model failover
+const callGemini = async (API_KEY, prompt, generationConfig) => {
+  const { text } = await callGeminiWithFallback(API_KEY, prompt, generationConfig);
+  return text;
 };
 
 export const analyzeResume = async (req, res) => {
@@ -75,10 +47,10 @@ Return ONLY this JSON (no markdown, no extra text):
   "analysisReport": "2-3 sentence summary"
 }`;
 
-    console.log(`📡 Calling Gemini API using model: ${ANALYZE_MODEL}`);
+    console.log("📡 Calling Gemini API with failover model pool...");
     const startTime = Date.now();
 
-    const responseText = await callGemini(API_KEY, ANALYZE_MODEL, prompt, {
+    const responseText = await callGemini(API_KEY, prompt, {
       response_mime_type: "application/json",
       temperature: 0.1,
       maxOutputTokens: 2048,
@@ -133,7 +105,7 @@ Return ONLY this JSON (no markdown, no extra text):
     // 4. Background Assignment Logic - skipped since we don't have Assignment model
 
   } catch (err) {
-    console.error(`❌ AI Error on ${ANALYZE_MODEL}:`, err.response?.status, err.response?.data?.error?.message || err.message);
+    console.error("❌ AI Error:", err.response?.status, err.response?.data?.error?.message || err.message);
     const status = err.response?.status || 500;
     return res.status(status).json({ success: false, message: `AI Analysis failed! (${err.message})` });
   }
@@ -161,8 +133,8 @@ Language: ${language}
 Code:
 ${code}`;
 
-    console.log(`💻 Running code simulation using: ${ANALYZE_MODEL}`);
-    const output = await callGemini(API_KEY, ANALYZE_MODEL, prompt, {
+    console.log("💻 Running code simulation via Gemini AI...");
+    const output = await callGemini(API_KEY, prompt, {
       temperature: 0.1,
       maxOutputTokens: 1024,
       topP: 0.8,
@@ -216,7 +188,7 @@ export const rewriteBulletPoints = async (req, res) => {
 
     const prompt = `Rewrite the following resume bullet point to make it strong, action-oriented, metrics-driven, and aligned with the role of "${cleanRole}".\n\nOriginal Bullet Point: "${cleanBullet}"\nTarget Role / Context: "${cleanJD || cleanRole}"\n\nReturn ONLY a JSON array containing 3 improved variations (strong action verb + core task + measurable metric outcome). No markdown, no extra commentary.\nExample output format:\n["Variation 1", "Variation 2", "Variation 3"]`;
 
-    const responseText = await callGemini(API_KEY, ANALYZE_MODEL, prompt, {
+    const responseText = await callGemini(API_KEY, prompt, {
       temperature: 0.7,
       maxOutputTokens: 1024,
       thinkingConfig: { thinkingBudget: 0 }

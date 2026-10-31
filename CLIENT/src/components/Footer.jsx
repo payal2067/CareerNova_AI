@@ -16,7 +16,7 @@ const Footer = () => {
                 </svg>
               </div>
               <span className="font-extrabold text-lg text-white">
-                Prep<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Orbit</span>
+                CareerNova<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">_AI</span>
               </span>
             </div>
             <p className="text-gray-400 text-sm max-w-sm leading-relaxed">

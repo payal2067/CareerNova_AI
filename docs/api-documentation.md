@@ -1,6 +1,6 @@
-# 📡 PrepOrbit — API Documentation
+# 📡 CareerNova_AI — API Documentation
 
-Welcome to the **PrepOrbit** API documentation. This document details all available RESTful API endpoints, request payload schemas, headers, authentication mechanisms, and sample responses.
+Welcome to the **CareerNova_AI** API documentation. This document details all available RESTful API endpoints, request payload schemas, headers, authentication mechanisms, and sample responses.
 
 ---
 
@@ -160,7 +160,7 @@ Alternatively, tokens are automatically read from HTTP-Only Cookies named `Oreo`
         "duration": "2022 - Present"
       }
     ],
-    "projects": ["PrepOrbit Platform", "E-Commerce Suite"]
+    "projects": ["CareerNova_AI Platform", "E-Commerce Suite"]
   },
   "matchResult": {
     "match_score": 85,

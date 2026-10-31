@@ -46,8 +46,8 @@ Ensure all values are configured in your production environment or secret manage
 | `CLIENT_URL` | Yes | Allowed frontend origin for CORS | `https://careernova.ai` |
 | `EMAIL` | Yes | Nodemailer sender email address | `support@careernova.ai` |
 | `EMAIL_PASSWORD`| Yes | App-specific email password / SMTP credential | `app-password-token` |
-| `GEMINI_API_KEY`| Optional | Google Gemini Generative AI Key | `AIzaSy...` (Falls back to local heuristic if unset) |
-| `GEMINI_MODEL` | Optional | Gemini model identifier | `gemini-2.5-flash` |
+| `GEMINI_API_KEY`| Optional | Google Gemini Generative AI Key | `your_gemini_api_key_here` (Falls back to local heuristic if unset) |
+| `GEMINI_MODEL` | Optional | Gemini model identifier | `gemini-1.5-flash` |
 
 ### 2.2 Frontend (`CLIENT/.env.production`)
 Variables consumed during the Vite build process:

@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
-import axios from "axios";
 import InterviewSession from "../models/InterviewSession.js";
 import Resume from "../models/resume.model.js";
-
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-const GEMINI_URL = (API_KEY) =>
-  `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${API_KEY}`;
+import { callGeminiWithFallback } from "../utils/gemini.service.js";
 
 const FAST_CONFIG = {
   temperature: 0.4,
@@ -124,18 +120,15 @@ Return ONLY a JSON array. Each object format:
         console.log(`📡 Generating ${roleStr} interview questions via Gemini AI...`);
         const startTime = Date.now();
 
-        const response = await axios.post(
-          GEMINI_URL(API_KEY),
-          {
-            contents: [{ parts: [{ text: questionPrompt }] }],
-            generationConfig: FAST_CONFIG
-          },
-          { headers: { "Content-Type": "application/json" }, timeout: 60000 }
+        const { text: rawText, model: usedModel } = await callGeminiWithFallback(
+          API_KEY,
+          questionPrompt,
+          FAST_CONFIG,
+          60000
         );
 
-        console.log(`⚡ Questions generated in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
+        console.log(`⚡ Questions generated via ${usedModel} in ${((Date.now() - startTime) / 1000).toFixed(1)}s`);
 
-        const rawText = response.data.candidates[0].content.parts[0].text;
         const jsonMatch = rawText.match(/\[[\s\S]*\]/);
         if (jsonMatch) {
           questionsData = JSON.parse(jsonMatch[0]);
@@ -319,16 +312,13 @@ Rate the answer out of 100 and provide constructive feedback. Return ONLY this J
   }
 }`;
 
-        const response = await axios.post(
-          GEMINI_URL(API_KEY),
-          {
-            contents: [{ parts: [{ text: evalPrompt }] }],
-            generationConfig: EVAL_CONFIG
-          },
-          { headers: { "Content-Type": "application/json" }, timeout: 60000 }
+        const { text: rawText } = await callGeminiWithFallback(
+          API_KEY,
+          evalPrompt,
+          EVAL_CONFIG,
+          60000
         );
 
-        const rawText = response.data.candidates[0].content.parts[0].text;
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           question.evaluation = JSON.parse(jsonMatch[0]);
@@ -430,16 +420,13 @@ Provide a JSON object containing the overall key strengths (2 bullet points) and
   "weaknesses": ["weakness1", "weakness2"]
 }`;
 
-        const summaryResponse = await axios.post(
-          GEMINI_URL(API_KEY),
-          {
-            contents: [{ parts: [{ text: summaryPrompt }] }],
-            generationConfig: EVAL_CONFIG
-          },
-          { headers: { "Content-Type": "application/json" }, timeout: 60000 }
+        const { text: rawText } = await callGeminiWithFallback(
+          API_KEY,
+          summaryPrompt,
+          EVAL_CONFIG,
+          60000
         );
 
-        const rawText = summaryResponse.data.candidates[0].content.parts[0].text;
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsedSummary = JSON.parse(jsonMatch[0]);

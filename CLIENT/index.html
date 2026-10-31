@@ -5,6 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CareerNova_AI — Enterprise AI Career Accelerator</title>
+    <!-- Suppress duplicate TensorFlow.js initialization and backend re-registration warnings -->
+    <script>
+      (function () {
+        const originalWarn = console.warn;
+        console.warn = function (...args) {
+          const msg = typeof args[0] === 'string' ? args[0] : '';
+          if (
+            msg.includes('already registered') ||
+            msg.includes('already been set') ||
+            msg.includes('The kernel')
+          ) {
+            return;
+          }
+          originalWarn.apply(console, args);
+        };
+      })();
+    </script>
     <!-- AI Proctoring Dependencies -->
     <script defer src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
