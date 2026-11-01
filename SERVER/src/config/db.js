@@ -8,13 +8,14 @@ const connectDB = async () => {
     try {
         const uri = process.env.MONGO_DB_URI || process.env.MONGO_URL;
         if (!uri) {
-            throw new Error("Neither MONGO_DB_URI nor MONGO_URL is defined in environment variables");
+            console.error("⚠️ Neither MONGO_DB_URI nor MONGO_URL is defined in environment variables");
+            return;
         }
         await mongoose.connect(uri);
         console.log(`MongoDB Connected Successfully ✅`);
     } catch (error) {
         console.error(`Database Connection Error: ${error.message}`);
-        process.exit(1);
+        console.warn("⚠️ Server will remain active on port, retrying database connection in background...");
     }
 };
 

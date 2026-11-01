@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import connectDB from "./src/config/db.js";
 
 import authRouter from "./src/router/auth.route.js";
@@ -14,10 +16,21 @@ import { securityHeaders, apiLimiter } from "./src/middleware/securityMiddleware
 
 dotenv.config();
 
-const isMainModule = process.argv[1] && (process.argv[1].endsWith("index.js") || process.argv[1].endsWith("server.js"));
+const __filename = fileURLToPath(import.meta.url);
+const isTestEnv =
+  process.env.NODE_ENV === "test" ||
+  process.argv.some((arg) => typeof arg === "string" && arg.includes("test"));
+
+const isMainModule =
+  !isTestEnv &&
+  (!process.argv[1] ||
+    process.argv[1].endsWith("index.js") ||
+    process.argv[1].endsWith("server.js") ||
+    path.resolve(process.argv[1]) === path.resolve(__filename) ||
+    path.resolve(process.argv[1]) === path.resolve(path.dirname(__filename)));
 
 // Connect DB only when running as main application server
-if (process.env.NODE_ENV !== "test" && isMainModule) {
+if (isMainModule) {
   connectDB();
 }
 
@@ -140,7 +153,7 @@ app.use((err, req, res, _next) => {
 const PORT = process.env.PORT || 4500;
 
 let server = null;
-if (process.env.NODE_ENV !== "test" && isMainModule) {
+if (isMainModule) {
   server = app.listen(PORT, () => {
     console.log(`🚀 CareerNova API running on port ${PORT}`);
   });

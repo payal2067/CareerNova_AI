@@ -12,6 +12,9 @@
     "format:check": "npm run format:check --prefix SERVER && npm run format:check --prefix CLIENT",
     "test": "npm test --prefix SERVER && npm test --prefix CLIENT",
     "build": "npm run build --prefix CLIENT",
+    "dev:server": "npm run dev --prefix SERVER",
+    "dev:client": "npm run dev --prefix CLIENT",
+    "dev": "npm run dev --prefix SERVER",
     "start": "npm start --prefix SERVER"
   }
 }
