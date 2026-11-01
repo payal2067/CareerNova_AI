@@ -26,7 +26,7 @@ const Navbar = () => {
                   <circle cx="18" cy="8" r="1.5" fill="#38bdf8" className="animate-pulse" />
                 </svg>
               </div>
-              <span className="font-extrabold text-xl tracking-tight text-white">Prep<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400">Orbit</span></span>
+              <span className="font-extrabold text-xl tracking-tight text-white">CareerNova<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400">_AI</span></span>
             </button>
           </div>
 
