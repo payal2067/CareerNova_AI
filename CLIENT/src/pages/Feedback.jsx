@@ -99,7 +99,7 @@ const Feedback = () => {
               <FiMessageSquare size={24} />
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">We Value Your Feedback</h1>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1">Help us improve CareerNova_AI with your thoughts and suggestions.</p>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1">Help us improve PrepOrbit with your thoughts and suggestions.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

@@ -16,7 +16,7 @@ const Footer = () => {
                 </svg>
               </div>
               <span className="font-extrabold text-lg text-white">
-                CareerNova<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">_AI</span>
+                Prep<span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Orbit</span>
               </span>
             </div>
             <p className="text-gray-400 text-sm max-w-sm leading-relaxed">
@@ -57,7 +57,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
-          <span>&copy; {new Date().getFullYear()} CareerNova_AI. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} PrepOrbit. All rights reserved.</span>
           <div className="flex space-x-6">
             <a href="#" className="hover:text-gray-300">Privacy Policy</a>
             <a href="#" className="hover:text-gray-300">Terms of Service</a>

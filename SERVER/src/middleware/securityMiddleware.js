@@ -46,6 +46,9 @@ class MemoryRateLimiter {
 
   middleware() {
     return (req, res, next) => {
+      // Never rate-limit CORS preflight OPTIONS requests
+      if (req.method === "OPTIONS") return next();
+
       const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
       const now = Date.now();
 

@@ -174,7 +174,7 @@ const Register = () => {
               </svg>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Create Account</h1>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1">Get started with your free personalized CareerNova_AI account</p>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1">Get started with your free personalized PrepOrbit account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

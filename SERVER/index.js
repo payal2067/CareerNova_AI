@@ -42,32 +42,47 @@ app.use(securityHeaders);
 // Cookie parsing
 app.use(cookieParser());
 
-// CORS Configuration with strict local + configured origin allowlist
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-].filter(Boolean);
+// Dynamic CORS origin verification supporting local dev, Vercel deployments, Render, and configured origins
+const isOriginAllowed = (origin) => {
+  if (!origin) return true; // Server-to-server, curl, Postman
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (
-        allowedOrigins.includes(origin) ||
-        /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
-      ) {
-        return callback(null, true);
-      }
-      return callback(new Error("Blocked by CORS policy"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
-  })
-);
+  // Split multiple comma-separated URLs in CLIENT_URL if provided
+  const configuredOrigins = (process.env.CLIENT_URL || "")
+    .split(",")
+    .map((u) => u.trim())
+    .filter(Boolean);
+
+  if (configuredOrigins.includes(origin)) return true;
+
+  // Local development
+  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return true;
+
+  // Vercel production & preview deployments (*.vercel.app)
+  if (/^https:\/\/.*\.vercel\.app$/.test(origin)) return true;
+
+  // Render & Netlify deployment domains
+  if (/^https:\/\/.*\.onrender\.com$/.test(origin)) return true;
+  if (/^https:\/\/.*\.netlify\.app$/.test(origin)) return true;
+
+  return false;
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      return callback(null, true);
+    }
+    console.warn(`[CORS] Rejected request from unauthorized origin: ${origin}`);
+    return callback(new Error(`Blocked by CORS policy: origin ${origin} is not allowed`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
+  exposedHeaders: ["X-Request-Id"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // Payload size limits
 app.use(express.json({ limit: "10mb" }));
